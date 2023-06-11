@@ -1,19 +1,54 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"pipeline": {
-		"build": {
-			"dependsOn": ["^build", "^db:generate"],
-			"outputs": [".next/**", "dist/**", "build/**"]
-		},
-		"dev": {
-			"dependsOn": ["^db:generate"],
-			"cache": false
-		},
-		"db:generate": {
-			"cache": false
-		},
-		"db:push": {
-			"cache": false
-		}
+	  "build": {
+		"dependsOn": ["^backend:build", "^frontend:build", "^processor:build"],
+		"outputs": [".next/**", "build/**"],
+		"steps": [
+		  {
+			"name": "Build backend",
+			"shell": "bash",
+			"script": "pnpm run build --prefix apps/backend"
+		  },
+		  {
+			"name": "Build frontend",
+			"shell": "bash",
+			"script": "pnpm run build --prefix apps/frontend"
+		  },
+		  {
+			"name": "Build processor",
+			"shell": "bash",
+			"script": "pnpm run build --prefix apps/processor"
+		  }
+		]
+	  },
+	  "dev": {
+		"dependsOn": ["^backend:dev", "^frontend:dev", "^processor:dev"],
+		"cache": false,
+		"steps": [
+		  {
+			"name": "Start backend",
+			"shell": "bash",
+			"script": "pnpm run dev --prefix apps/backend"
+		  },
+		  {
+			"name": "Start frontend",
+			"shell": "bash",
+			"script": "pnpm run dev --prefix apps/frontend"
+		  },
+		  {
+			"name": "Start processor",
+			"shell": "bash",
+			"script": "pnpm run dev --prefix apps/processor"
+		  }
+		]
+	  },
+	  "backend:build": {},
+	  "frontend:build": {},
+	  "processor:build": {},
+	  "backend:dev": {},
+	  "frontend:dev": {},
+	  "processor:dev": {}
 	}
-}
+  }
+  
